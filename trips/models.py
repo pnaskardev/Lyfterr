@@ -1,12 +1,9 @@
-# from django.contrib.auth.models import AbstractUser
-
-
-# class User(AbstractUser):
-#     pass
-
-
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.shortcuts import reverse
+
+import uuid
+
 
 class User(AbstractUser):
     class Meta(AbstractUser.Meta):
@@ -30,3 +27,29 @@ class User(AbstractUser):
         help_text='Specific permissions for this user.',
         verbose_name='user permissions',
     )
+
+
+class Trip(models.Model):
+    REQUESTED = 'requested'
+    STARTED = 'started'
+    IN_PROGRESS = 'in_progress'
+    COMPLETED = 'completed'
+    STATUSES = (
+        (REQUESTED, 'Requested'),
+        (STARTED, 'Started'),
+        (IN_PROGRESS, 'In progress'),
+        (COMPLETED, 'Completed'),
+    )
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    created=models.DateTimeField(auto_now_add=True)
+    updated=models.DateTimeField(auto_now=True)
+    pick_up_address=models.CharField(max_length=255)
+    drop_off_address=models.CharField(max_length=255)
+    status=models.CharField(max_length=20,choices=STATUSES,default=REQUESTED)
+
+    def __str__(self):
+        return f'{self.id}'
+    
+    def get_absolute_url(self):
+        return reverse('trip:trip_detail',kwargs={'trip_id':self.id})
