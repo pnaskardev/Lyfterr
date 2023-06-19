@@ -1,63 +1,54 @@
+import uuid
+
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.shortcuts import reverse
 
+   
 import uuid
 
 from django.conf import settings
+from django.contrib.auth.models import AbstractUser
+from django.db import models
+from django.shortcuts import reverse
+
 
 class User(AbstractUser):
-    class Meta(AbstractUser.Meta):
-        swappable = 'AUTH_USER_MODEL'
-        db_table = 'auth_user'
+    photo = models.ImageField(upload_to='photos', null=True, blank=True)
 
-    # Add a unique related_name for the groups field
-    groups = models.ManyToManyField(
-        'auth.Group',
-        related_name='custom_user_set',
-        blank=True,
-        help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.',
-        verbose_name='groups',
-    )
-
-    # Add a unique related_name for the user_permissions field
-    user_permissions = models.ManyToManyField(
-        'auth.Permission',
-        related_name='custom_user_set',
-        blank=True,
-        help_text='Specific permissions for this user.',
-        verbose_name='user permissions',
-    )
+    @property
+    def group(self):
+        groups = self.groups.all()
+        return groups[0].name if groups else None
 
 
 class Trip(models.Model):
-    REQUESTED = 'requested'
-    STARTED = 'started'
-    IN_PROGRESS = 'in_progress'
-    COMPLETED = 'completed'
+    REQUESTED = 'REQUESTED'
+    STARTED = 'STARTED'
+    IN_PROGRESS = 'IN_PROGRESS'
+    COMPLETED = 'COMPLETED'
     STATUSES = (
-        (REQUESTED, 'Requested'),
-        (STARTED, 'Started'),
-        (IN_PROGRESS, 'In progress'),
-        (COMPLETED, 'Completed'),
+        (REQUESTED, REQUESTED),
+        (STARTED, STARTED),
+        (IN_PROGRESS, IN_PROGRESS),
+        (COMPLETED, COMPLETED),
     )
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    created=models.DateTimeField(auto_now_add=True)
-    updated=models.DateTimeField(auto_now=True)
-    pick_up_address=models.CharField(max_length=255)
-    drop_off_address=models.CharField(max_length=255)
-    status=models.CharField(max_length=20,choices=STATUSES,default=REQUESTED)
-    
-    driver=models.ForeignKey(
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    pick_up_address = models.CharField(max_length=255)
+    drop_off_address = models.CharField(max_length=255)
+    status = models.CharField(max_length=20, choices=STATUSES, default=REQUESTED)
+    driver = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         null=True,
         blank=True,
         on_delete=models.DO_NOTHING,
         related_name='trips_as_driver'
     )
-
-    rider=models.ForeignKey(
+    rider = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         null=True,
         blank=True,
@@ -67,6 +58,47 @@ class Trip(models.Model):
 
     def __str__(self):
         return f'{self.id}'
-    
+
     def get_absolute_url(self):
-        return reverse('trip:trip_detail',kwargs={'trip_id':self.id})
+        return reverse('trip:trip_detail', kwargs={'trip_id': self.id})
+    
+
+
+class Trip(models.Model):
+    REQUESTED = 'REQUESTED'
+    STARTED = 'STARTED'
+    IN_PROGRESS = 'IN_PROGRESS'
+    COMPLETED = 'COMPLETED'
+    STATUSES = (
+        (REQUESTED, REQUESTED),
+        (STARTED, STARTED),
+        (IN_PROGRESS, IN_PROGRESS),
+        (COMPLETED, COMPLETED),
+    )
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    pick_up_address = models.CharField(max_length=255)
+    drop_off_address = models.CharField(max_length=255)
+    status = models.CharField(max_length=20, choices=STATUSES, default=REQUESTED)
+    driver = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.DO_NOTHING,
+        related_name='trips_as_driver'
+    )
+    rider = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.DO_NOTHING,
+        related_name='trips_as_rider'
+    )
+
+    def __str__(self):
+        return f'{self.id}'
+
+    def get_absolute_url(self):
+        return reverse('trip:trip_detail', kwargs={'trip_id': self.id})
