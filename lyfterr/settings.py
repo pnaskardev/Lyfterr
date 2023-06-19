@@ -15,7 +15,6 @@ import os
 from pathlib import Path
 
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -55,6 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'lyfterr.middleware.TokenAuthMiddlewareStack',
 ]
 
 ROOT_URLCONF = 'lyfterr.urls'
@@ -77,11 +77,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'lyfterr.wsgi.application'
 ASGI_APPLICATION = 'lyfterr.asgi.application'
+# ASGI_APPLICATION = 'lyfterr.routing.application'
+
 
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': 
+        'CONFIG':
         {
             'hosts': 'redis://localhost:6379',
         },
@@ -105,7 +107,8 @@ CHANNEL_LAYERS = {
 # }
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2', # 'django.db.backends.
+        # 'django.db.backends.
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'lyfterr_db',
         'USER': 'postgres',
         'PASSWORD': '#Test123#',
@@ -113,6 +116,8 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+
+AUTH_USER_MODEL = 'trips.User'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -168,3 +173,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+MEDIA_URL = '/media/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, '../media')
