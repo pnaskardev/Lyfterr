@@ -6,7 +6,7 @@ import { isRider } from '../services/AuthService';
 function Landing (props) {
   return (
     <div className='middle-center'>
-      <h1 className='landing logo'>Taxi</h1>
+      <h1 className='landing logo'>Lyfterr</h1>
       {
         props.isLoggedIn
           ? <LinkContainer to={isRider() ? '/rider' : '/driver'}>

@@ -95,7 +95,7 @@ function Layout ({ isLoggedIn, logOut }) {
       <Navbar bg='light' expand='lg' variant='light'>
         <Container>
           <LinkContainer to='/'>
-            <Navbar.Brand className='logo'>Taxi</Navbar.Brand>
+            <Navbar.Brand className='logo'>Lyfterr</Navbar.Brand>
           </LinkContainer>
           <Navbar.Toggle />
           <Navbar.Collapse>

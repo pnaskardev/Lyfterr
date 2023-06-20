@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+
+  lyfterr-server:
+    build:
+      context: ./server
+    command: python manage.py runserver 0.0.0.0:8000
+    container_name: lyfterr-server
+    depends_on:
+      - lyfterr-redis
+      - lyfterr-database
+    environment:
+      - PGDATABASE=lyfterr
+      - PGUSER=postgres
+      - PGPASSWORD=#Test123#
+      - PGHOST=localhost
+      - REDIS_URL=redis://lyfterr-redis:6379/0
+    ports:
+      - 8003:8000
+    volumes:
+    - ./server:/usr/src/app
+
+  lyfterr-redis:
+    container_name: lyfterr-redis
+    image: redis:7-alpine
+
+  lyfterr-database:
+    container_name: lyfterr-database
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=lyfterr
+      - POSTGRES_PASSWORD=lyfterr
+    expose:
+      - 5432
+    volumes:
+      - lyfterr-database:/var/lib/postgresql/data
+
+  lyfterr-client:
+    build:
+      context: ./client
+    command: yarn start
+    container_name: lyfterr-client
+    depends_on:
+      - lyfterr-server
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - REACT_APP_BASE_URL=http://localhost:8003
+      - REACT_APP_GOOGLE_MAPS_KEY=<YOUR_API_KEY>
+    ports:
+      - 3001:3000
+    stdin_open: true
+    volumes:
+      - ./client:/usr/src/app
+
+volumes:
+  lyfterr-database:
