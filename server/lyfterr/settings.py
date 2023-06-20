@@ -111,17 +111,24 @@ CHANNEL_LAYERS = {
 #         'PORT': os.getenv('PGPORT', '5432'),
 #     }
 # }
+# DATABASES = {
+#     'default': {
+#         # 'django.db.backends.
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'lyfterr_db',
+#         'USER': 'postgres',
+#         'PASSWORD': '#Test123#',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
 DATABASES = {
     'default': {
-        # 'django.db.backends.
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'lyfterr_db',
-        'USER': 'postgres',
-        'PASSWORD': '#Test123#',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
 
 AUTH_USER_MODEL = 'trips.User'
 
